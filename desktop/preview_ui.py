@@ -82,6 +82,7 @@ def install(owner,main,markup):
     owner.mode_buttons={}
     for mode,name,label in modes:
         b=button(markup,name,label,lambda checked=False,m=mode:owner.canvas.set_mode(m),True);owner.mode_buttons[mode]=b
+    button(markup,'pen','Signature',owner.add_signature)
     markup.addSeparator();color=QToolButton();color.setText('●');color.setToolTip('Stroke color');color.setAccessibleName('Stroke color');color.clicked.connect(owner.ink_color);color.setStyleSheet('color:#2563eb;font-size:21px;');markup.addWidget(color);spacer(markup)
     owner.pages.setItemDelegate(ThumbnailDelegate(owner.pages));owner.pages.setSpacing(0);owner.pages.setMinimumWidth(150);owner.pages.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
     owner.statusBar().setSizeGripEnabled(False)

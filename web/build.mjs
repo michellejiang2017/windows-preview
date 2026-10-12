@@ -6,7 +6,7 @@ import {fileURLToPath} from 'node:url';
 process.chdir(path.dirname(fileURLToPath(import.meta.url)));
 await mkdir('dist/assets',{recursive:true});
 await cp('public','dist',{recursive:true});
-await build({entryPoints:['src/main.js'],bundle:true,format:'esm',outfile:'dist/assets/app.js',minify:true,platform:'browser',target:'es2022'});
+await build({absWorkingDir:path.dirname(fileURLToPath(import.meta.url)),entryPoints:['src/main.js'],bundle:true,format:'esm',outfile:'dist/assets/app.js',minify:true,platform:'browser',target:'es2022'});
 await copyFile('node_modules/pdfjs-dist/build/pdf.worker.min.mjs','dist/assets/pdf.worker.min.mjs');
 await copyFile('node_modules/@embedpdf/pdfium/dist/pdfium.wasm','dist/assets/pdfium.wasm');
 await cp('node_modules/tesseract.js/dist/worker.min.js','dist/assets/ocr.worker.js');

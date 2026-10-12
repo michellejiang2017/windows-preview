@@ -69,3 +69,16 @@ def test_mouse_drag_moves_object(window,tmp_path):
     QTest.mouseMove(w.canvas.viewport(),finish)
     QTest.mouseRelease(w.canvas.viewport(),Qt.MouseButton.LeftButton,pos=finish)
     assert w.active_object['scene_rect'].x()>before.x()+10
+
+def test_signature_pad_draw_and_type(window):
+    from signature_ui import SignaturePad
+    from PySide6.QtTest import QTest
+    from PySide6.QtCore import QPoint
+    pad=SignaturePad();pad.show();QApplication.processEvents();assert pad.image() is None
+    QTest.mousePress(pad,Qt.MouseButton.LeftButton,pos=QPoint(30,50));QTest.mouseMove(pad,QPoint(90,80));QTest.mouseRelease(pad,Qt.MouseButton.LeftButton,pos=QPoint(90,80));assert pad.image().getbbox()
+    pad.clear();pad.name='Michelle';assert pad.image().getbbox();pad.close()
+
+def test_signature_action_places_editable_image(window,monkeypatch):
+    import signature_ui
+    monkeypatch.setattr(signature_ui,'capture_signature',lambda parent:Image.new('RGBA',(120,35),'black'))
+    window.actions['Signature…'].trigger();assert window.active_object['object']['kind']=='image'

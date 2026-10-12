@@ -30,6 +30,10 @@ Download **Preview-Windows.zip** from [Releases](https://github.com/michellejian
 
 To run from source, install Python 3.12 and double-click `desktop/Run Preview.cmd`. First launch installs its libraries. Or create a virtual environment and install `desktop/requirements.txt`, then run `desktop/app.py`.
 
+## Signatures and markup
+
+Click the pencil toolbar, then **Sign**. Draw a signature with a mouse/touch/pen, or type your name. Place it on the PDF, move or resize it, and Save. Signatures are not retained outside the current document. This creates a visible signature; certificate-based digital signing is not included. The native edition has **Edit → Signature** and a signature button in its markup toolbar. Both editions also provide pen drawings, text, shapes and highlights.
+
 ## Features and limits
 
 | PDF workflow | Browser | Native Windows |
@@ -38,6 +42,7 @@ To run from source, install Python 3.12 and double-click `desktop/Run Preview.cm
 | Existing PDF objects: move, resize, delete | Text, images, paths, grouped objects via PDFium | Text spans and direct images |
 | Replace existing text | Uses original font; missing characters may not be supported | Standard font; no paragraph reflow |
 | Add/paste/drop images, text, pen, shapes, highlights | Yes | Yes |
+| Draw/type/place visual signatures | Yes | Yes |
 | Text selection, text extraction, raster image extraction, PNG export | Yes | Yes |
 | Scanned-page OCR | English printed text, one page at a time | English/Chinese, selected/all pages |
 | Redaction / reviewed search-redact | Affected pages rasterized and rebuilt | Removes underlying PDF content |

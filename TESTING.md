@@ -2,10 +2,10 @@
 
 Checked on Windows x64, October 12, 2026.
 
-- Native edition: all **30** existing automated PDF/image and Qt usability tests pass.
+- Native edition: **32** automated PDF/image, Qt usability and signature tests pass.
 - Browser PDF engine: **12** tests pass for blank pages, order validation, insertion, duplication, deletion, rotation, extraction, undo, saveable PDFs and real PDFium object enumeration/transformation/deletion/text replacement. Object transformation checks also confirm a different page is unchanged.
 - Browser interaction checks pass in Chrome for opening/rendering, blank page + undo, mouse selection/movement/resizing of an existing image, page number/label/bookmark dialogs, saved PDF reload, native text selection and a narrow mobile layout. No JavaScript page errors were reported.
-- Additional Chrome checks pass for form values surviving serialization, actual English OCR on a scanned invoice, and reviewed redaction rebuilding a page without its original text.
+- Additional Chrome checks pass for form values surviving serialization, drawn and typed signatures inserted as editable images, actual English OCR on a scanned invoice, and reviewed redaction rebuilding a page without its original text.
 - Static bundle builds successfully with pinned dependencies. Hosting and release status are recorded in DEPLOYMENT.md.
 
 ## Run engine tests

@@ -182,6 +182,7 @@ class Window(PdfToolsMixin,QMainWindow):
         for text,fn,key in [('Undo',self.undo,'Ctrl+Z'),('Redo',self.redo,'Ctrl+Y'),('Copy page / image',self.copy,'Ctrl+C'),('Paste image onto page',self.paste,'Ctrl+V'),('Delete selected pages',self.delete,'Delete'),('Duplicate selected pages',self.duplicate,'Ctrl+D')]: self.action(edit,text,fn,key)
         self.action(pdf,'Insert PDFs or images…',self.insert,None,main); self.action(pdf,'Add blank page',self.blank); self.action(pdf,'Replace current page…',self.replace); self.action(pdf,'Rotate selected right',lambda:self.rotate(90),'Ctrl+R',main); self.action(pdf,'Rotate selected left',lambda:self.rotate(-90),'Ctrl+L'); self.action(pdf,'Crop page',lambda:self.canvas.set_mode('crop')); self.action(pdf,'Fill form fields…',self.forms); self.action(pdf,'Extract text…',self.text_export); self.action(pdf,'Extract embedded images…',self.embedded_images); self.action(pdf,'Password and permissions…',self.encrypt); self.action(pdf,'Remove document metadata',lambda:self.cleanup('metadata')); self.action(pdf,'Delete all annotations',lambda:self.cleanup('annotations')); self.action(pdf,'Delete all hyperlinks',lambda:self.cleanup('links')); self.action(pdf,'Remove annotation author names',lambda:self.cleanup('authors')); self.action(pdf,'Annotation author…',self.set_author)
         self.add_pdf_tools(pdf)
+        self.action(edit,'Signature…',self.add_signature)
         for mode in ['view','select text','text','pen','rectangle','highlight','redact','crop','stamp','alpha']:
             self.action(edit,mode.title(),lambda m=mode:self.canvas.set_mode(m),None,markup)
         self.action(edit,'Ink color…',self.ink_color); self.action(edit,'Find text…',self.find,'Ctrl+F'); self.action(view,'Inspector',self.inspector,'Ctrl+I',main)
@@ -473,7 +474,7 @@ class Window(PdfToolsMixin,QMainWindow):
         else:QApplication.clipboard().setImage(ImageQt(self.doc.render(self.index,2)))
     @guarded
     def drop_image(self,path,point):
-        self.require();im=Image.open(path).convert('RGBA');bounds=self.canvas.sceneRect();width=min(im.width,bounds.width()*.35);height=width*im.height/im.width
+        self.require();im=path.copy().convert('RGBA') if isinstance(path,Image.Image) else Image.open(path).convert('RGBA');bounds=self.canvas.sceneRect();width=min(im.width,bounds.width()*.35);height=width*im.height/im.width
         if height>bounds.height()*.4:height=bounds.height()*.4;width=height*im.width/im.height
         x=max(0,min(point.x(),bounds.width()-width));y=max(0,min(point.y(),bounds.height()-height));self.doc.checkpoint()
         if self.doc.is_pdf:
@@ -487,6 +488,14 @@ class Window(PdfToolsMixin,QMainWindow):
         if im.isNull():raise ValueError('Copy an image to the clipboard first.')
         if not self.discard():return
         self.doc=Document(); self.doc.images=[qimage_pil(im)]; self.doc.dirty=True; self.index=0; self.refresh()
+    @guarded
+    def add_signature(self):
+        self.require()
+        from signature_ui import capture_signature
+        from PySide6.QtCore import QPointF
+        image=capture_signature(self)
+        if image is not None:
+            bounds=self.canvas.sceneRect();self.drop_image(image,QPointF(bounds.width()*.25,bounds.height()*.6));self.statusBar().showMessage('Signature placed. Drag to move or resize, then Save.')
     @guarded
     def paste(self):
         self.require(); self.canvas.set_mode('stamp'); self.statusBar().showMessage('Drag a rectangle where the clipboard image should go.')
