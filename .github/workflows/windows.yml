@@ -1,0 +1,31 @@
+name: Build Windows app
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  desktop:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r desktop/requirements.txt pytest pyinstaller
+      - run: python -m pytest desktop -q
+        env:
+          QT_QPA_PLATFORM: offscreen
+      - name: Bundle app without requiring Python
+        working-directory: desktop
+        run: python -m PyInstaller --noconfirm --windowed --name Preview --collect-all rapidocr_onnxruntime --collect-all onnxruntime --collect-all rembg --add-data "Demo.pdf;." app.py
+      - run: Compress-Archive -LiteralPath desktop/dist/Preview -DestinationPath Preview-Windows.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Preview-Windows
+          path: Preview-Windows.zip
+      - uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: Preview-Windows.zip

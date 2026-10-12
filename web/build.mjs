@@ -1,0 +1,16 @@
+import {build} from 'esbuild';
+import {mkdir,cp,copyFile} from 'node:fs/promises';
+import {createRequire} from 'node:module';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+process.chdir(path.dirname(fileURLToPath(import.meta.url)));
+await mkdir('dist/assets',{recursive:true});
+await cp('public','dist',{recursive:true});
+await build({entryPoints:['src/main.js'],bundle:true,format:'esm',outfile:'dist/assets/app.js',minify:true,platform:'browser',target:'es2022'});
+await copyFile('node_modules/pdfjs-dist/build/pdf.worker.min.mjs','dist/assets/pdf.worker.min.mjs');
+await copyFile('node_modules/@embedpdf/pdfium/dist/pdfium.wasm','dist/assets/pdfium.wasm');
+await cp('node_modules/tesseract.js/dist/worker.min.js','dist/assets/ocr.worker.js');
+const require=createRequire(import.meta.url);
+const core=path.dirname(require.resolve('tesseract.js-core',{paths:[path.dirname(require.resolve('tesseract.js'))]}));
+await cp(core,'dist/assets/tesseract-core',{recursive:true});
+console.log('Web app built.');

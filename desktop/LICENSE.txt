@@ -1,0 +1,14 @@
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+This project's original source is licensed under the GNU Affero General Public
+License, version 3 or (at your option) any later version.
+
+It is provided without warranty, including the implied warranties of
+merchantability or fitness for a particular purpose.
+
+The complete license text is available at:
+https://www.gnu.org/licenses/agpl-3.0.txt
+
+Third-party libraries retain their own licenses. This notice does not replace
+their licensing terms or notices. Obtain and include full applicable license
+texts before redistributing a packaged application.

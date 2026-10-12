@@ -1,0 +1,8 @@
+html,body{overflow:hidden}
+main{height:0;overflow:hidden;position:relative}
+#sidebar,#viewer{min-height:0}
+#overlay{pointer-events:all}
+.textLayer:not(.selectable),.textLayer:not(.selectable) *{pointer-events:none!important;user-select:none}
+#overlay{z-index:3;user-select:none}
+.textLayer.selectable~#overlay{pointer-events:none}
+#inspector{position:absolute;top:0;right:0;bottom:0;z-index:5;box-shadow:-3px 0 12px #0001;overflow:auto}
