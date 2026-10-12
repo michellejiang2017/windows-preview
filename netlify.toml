@@ -1,0 +1,6 @@
+[build]
+  base = "web"
+  command = "corepack enable && pnpm install --frozen-lockfile && pnpm build"
+  publish = "dist"
+[build.environment]
+  NODE_VERSION = "24"

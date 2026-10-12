@@ -4,7 +4,7 @@ A Preview-inspired PDF and image workspace for Windows and the web. Original UI 
 
 ## Web app
 
-Open the deployed URL listed in [DEPLOYMENT.md](DEPLOYMENT.md). Documents are processed on your device. Enable the pencil toolbar, select a PDF object, and drag to move or drag its lower-right corner to resize. Double-click text to replace it. Use the property panel for precise dimensions or deletion.
+Open the [public web app](https://michellejiang2017.github.io/windows-preview/) — no ChatGPT login required. Documents are processed on your device. Enable the pencil toolbar, select a PDF object, and drag to move or drag its lower-right corner to resize. Double-click text to replace it. Use the property panel for precise dimensions or deletion. See [DEPLOYMENT.md](DEPLOYMENT.md) for hosting details.
 
 The thumbnail sidebar supports Ctrl/Command or Shift selection, drag-to-reorder, blank page insertion, duplication, deletion and rotation. Drop PDFs into the sidebar to insert pages; drop an image onto the canvas to place it. Images can also become PDF pages. Select text to copy normally; Ctrl+S saves or downloads your edited PDF.
 

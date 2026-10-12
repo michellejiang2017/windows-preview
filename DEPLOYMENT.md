@@ -2,7 +2,13 @@
 
 ## Browser app
 
-Hosted app: https://windows-preview-michelle.chummyquail32.chatgpt.site
+Public app: https://michellejiang2017.github.io/windows-preview/
+
+GitHub Pages publishes the tested browser build automatically on pushes to `main`. No ChatGPT login is required. The repository is public and Pages is configured to deploy through GitHub Actions.
+
+Alternative hosts: import this repository into Netlify (uses `netlify.toml`) or Vercel (uses `vercel.json`, repository root). Connecting either hosting account is required for deployment there. Both configurations build the same static app.
+
+Private Sites copy: https://windows-preview-michelle.chummyquail32.chatgpt.site
 
 The initial Sites deployment is private to the owner. App files are hosted; document processing remains in the browser. Hosting authentication may require a first online visit before offline use. PDF documents are not uploaded to hosting.
 
