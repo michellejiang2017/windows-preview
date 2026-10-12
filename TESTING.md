@@ -6,6 +6,7 @@ Checked on Windows x64, October 12, 2026.
 - Browser PDF engine: **12** tests pass for blank pages, order validation, insertion, duplication, deletion, rotation, extraction, undo, saveable PDFs and real PDFium object enumeration/transformation/deletion/text replacement. Object transformation checks also confirm a different page is unchanged.
 - Browser interaction checks pass in Chrome for opening/rendering, blank page + undo, mouse selection/movement/resizing of an existing image, page number/label/bookmark dialogs, saved PDF reload, native text selection and a narrow mobile layout. No JavaScript page errors were reported.
 - Additional Chrome checks pass for form values surviving serialization, drawn and typed signatures inserted as editable images, actual English OCR on a scanned invoice, and reviewed redaction rebuilding a page without its original text.
+- The demo rectangle-redaction regression compares actual canvas pixels: white paper and the blue image outside the selection remain unchanged, while the selected secret is black. It also verifies the footer stays at the bottom through tool changes, dialogs, page actions and mobile resizing. Checked in Chrome and Edge at 785 × 704 with 2× display scaling; the browser regression runs in GitHub Actions.
 - Static bundle builds successfully with pinned dependencies. Hosting and release status are recorded in DEPLOYMENT.md.
 
 ## Run engine tests

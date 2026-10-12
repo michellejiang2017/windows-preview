@@ -19,6 +19,13 @@ jobs:
         working-directory: web
       - run: pnpm build
         working-directory: web
+      - run: pnpm exec playwright install --with-deps chromium
+        working-directory: web
+      - name: Check redaction pixels and viewport layout
+        run: node test/redaction-browser.mjs
+        working-directory: web
+        env:
+          PREVIEW_BROWSER: chromium
       - uses: actions/upload-artifact@v4
         with:
           name: preview-web
