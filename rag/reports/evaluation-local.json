@@ -11,7 +11,7 @@
     "unknown_abstention_accuracy": 1.0,
     "citation_span_support_rate": 1,
     "latency_median_ms": 26.01,
-    "latency_p95_ms": 279.76,
+    "latency_p95_ms": 287.78,
     "inference_api_cost_usd": 0.0,
     "peak_observed_local_rss_mb": 269.1
   },

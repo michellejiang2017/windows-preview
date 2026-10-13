@@ -2,6 +2,10 @@
 
 A Preview-inspired PDF and image workspace for Windows and the web. Original UI and icons; not affiliated with Apple or Adobe.
 
+## Document Q&A portfolio app
+
+[Passage](https://passage-document-qa.onrender.com) is a separate free Python document Q&A service with PDF/text/CSV ingestion, Chroma vector retrieval and extractive answers with source citations. See [setup, architecture and limitations](rag/README.md) and [cloud evaluation results](rag/reports/evaluation-cloud.json). Preview's existing editors continue to process documents locally; Passage uploads are sent to its server and expire with the demo session.
+
 ## Web app
 
 Open the [public web app](https://michellejiang2017.github.io/windows-preview/) — no ChatGPT login required. Documents are processed on your device. Enable the pencil toolbar, select a PDF object, and drag to move or drag its lower-right corner to resize. Double-click text to replace it. Use the property panel for precise dimensions or deletion. See [DEPLOYMENT.md](DEPLOYMENT.md) for hosting details.

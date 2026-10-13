@@ -1,0 +1,211 @@
+{
+  "timestamp": "2026-10-13T02:53:18.333455+00:00",
+  "target": "https://passage-document-qa.onrender.com",
+  "machine": "Windows-11-10.0.26200-SP0",
+  "scope": "12 public fixture questions; not a hidden/general benchmark. Latency is one warm sequential run, including the first query; cloud includes network. Citation support checks exact span containment, not semantic correctness. CSV row metadata and filename filters are part of retrieval.",
+  "summary": {
+    "questions": 12,
+    "retrieval_hit_at_4": 1.0,
+    "answer_exact_accuracy": 0.7,
+    "mean_token_f1": 0.7133333333333334,
+    "unknown_abstention_accuracy": 1.0,
+    "citation_span_support_rate": 1,
+    "latency_median_ms": 353.58,
+    "latency_p95_ms": 2385.77,
+    "inference_api_cost_usd": 0.0,
+    "peak_observed_local_rss_mb": null
+  },
+  "results": [
+    {
+      "id": "text-author",
+      "question": "Who wrote the Zen of Python?",
+      "expected": [
+        "Tim Peters"
+      ],
+      "answer": "Tim Peters",
+      "abstained": false,
+      "retrieval_hit_at_4": true,
+      "exact_correct": true,
+      "token_f1": 1.0,
+      "citation_span_supported": true,
+      "latency_ms": 2525.46,
+      "server_latency_ms": 2484.24,
+      "api_cost_usd": 0.0
+    },
+    {
+      "id": "text-date",
+      "question": "When was PEP 20 created?",
+      "expected": [
+        "19-Aug-2004"
+      ],
+      "answer": "I could not find a supported answer in the available documents.",
+      "abstained": true,
+      "retrieval_hit_at_4": true,
+      "exact_correct": false,
+      "token_f1": 0.0,
+      "citation_span_supported": true,
+      "latency_ms": 93.72,
+      "server_latency_ms": 60.25,
+      "api_cost_usd": 0.0
+    },
+    {
+      "id": "text-title",
+      "question": "What is the title of PEP 20?",
+      "expected": [
+        "The Zen of Python"
+      ],
+      "answer": "I could not find a supported answer in the available documents.",
+      "abstained": true,
+      "retrieval_hit_at_4": true,
+      "exact_correct": false,
+      "token_f1": 0.13333333333333333,
+      "citation_span_supported": true,
+      "latency_ms": 39.41,
+      "server_latency_ms": 6.57,
+      "api_cost_usd": 0.0
+    },
+    {
+      "id": "text-errors",
+      "question": "How should errors pass?",
+      "expected": [
+        "never pass silently",
+        "never"
+      ],
+      "answer": "never pass silently",
+      "abstained": false,
+      "retrieval_hit_at_4": true,
+      "exact_correct": true,
+      "token_f1": 1.0,
+      "citation_span_supported": true,
+      "latency_ms": 2271.47,
+      "server_latency_ms": 2238.13,
+      "api_cost_usd": 0.0
+    },
+    {
+      "id": "pdf-blank",
+      "question": "Which page is a blank page?",
+      "expected": [
+        "page 3",
+        "3"
+      ],
+      "answer": "page 3",
+      "abstained": false,
+      "retrieval_hit_at_4": true,
+      "exact_correct": true,
+      "token_f1": 1.0,
+      "citation_span_supported": true,
+      "latency_ms": 799.78,
+      "server_latency_ms": 712.92,
+      "api_cost_usd": 0.0
+    },
+    {
+      "id": "pdf-ocr",
+      "question": "Which page should I OCR?",
+      "expected": [
+        "page 2",
+        "2"
+      ],
+      "answer": "2",
+      "abstained": false,
+      "retrieval_hit_at_4": true,
+      "exact_correct": true,
+      "token_f1": 1.0,
+      "citation_span_supported": true,
+      "latency_ms": 797.8,
+      "server_latency_ms": 710.93,
+      "api_cost_usd": 0.0
+    },
+    {
+      "id": "pdf-secret",
+      "question": "What is the value of DEMO-SECRET?",
+      "expected": [
+        "000-TEST-000"
+      ],
+      "answer": "I could not find a supported answer in the available documents.",
+      "abstained": true,
+      "retrieval_hit_at_4": true,
+      "exact_correct": false,
+      "token_f1": 0.0,
+      "citation_span_supported": true,
+      "latency_ms": 91.64,
+      "server_latency_ms": 50.65,
+      "api_cost_usd": 0.0
+    },
+    {
+      "id": "csv-species",
+      "question": "What species is in data row 1?",
+      "expected": [
+        "setosa"
+      ],
+      "answer": "setosa",
+      "abstained": false,
+      "retrieval_hit_at_4": true,
+      "exact_correct": true,
+      "token_f1": 1.0,
+      "citation_span_supported": true,
+      "latency_ms": 325.96,
+      "server_latency_ms": 270.74,
+      "api_cost_usd": 0.0
+    },
+    {
+      "id": "csv-value",
+      "question": "What is the sepal_length in data row 1?",
+      "expected": [
+        "5.1"
+      ],
+      "answer": "5.1",
+      "abstained": false,
+      "retrieval_hit_at_4": true,
+      "exact_correct": true,
+      "token_f1": 1.0,
+      "citation_span_supported": true,
+      "latency_ms": 381.2,
+      "server_latency_ms": 342.36,
+      "api_cost_usd": 0.0
+    },
+    {
+      "id": "csv-last",
+      "question": "What species is in data row 150?",
+      "expected": [
+        "virginica"
+      ],
+      "answer": "virginica",
+      "abstained": false,
+      "retrieval_hit_at_4": true,
+      "exact_correct": true,
+      "token_f1": 1.0,
+      "citation_span_supported": true,
+      "latency_ms": 389.5,
+      "server_latency_ms": 356.57,
+      "api_cost_usd": 0.0
+    },
+    {
+      "id": "unknown-country",
+      "question": "What is the capital of France?",
+      "expected": [],
+      "answer": "I could not find a supported answer in the available documents.",
+      "abstained": true,
+      "retrieval_hit_at_4": null,
+      "exact_correct": true,
+      "token_f1": 1.0,
+      "citation_span_supported": true,
+      "latency_ms": 42.65,
+      "server_latency_ms": 6.94,
+      "api_cost_usd": 0.0
+    },
+    {
+      "id": "unknown-person",
+      "question": "Who won the 2025 chess championship?",
+      "expected": [],
+      "answer": "I could not find a supported answer in the available documents.",
+      "abstained": true,
+      "retrieval_hit_at_4": null,
+      "exact_correct": true,
+      "token_f1": 1.0,
+      "citation_span_supported": true,
+      "latency_ms": 59.25,
+      "server_latency_ms": 25.29,
+      "api_cost_usd": 0.0
+    }
+  ]
+}

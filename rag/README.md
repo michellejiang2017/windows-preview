@@ -2,6 +2,8 @@
 
 A separate Python RAG application in Windows Preview. The existing desktop and web editors keep their local/offline behavior. PDF ingestion reuses `desktop.engine.Document` read-only; no Qt dependency or editor state changes.
 
+**Live demo:** https://passage-document-qa.onrender.com
+
 ## Run locally
 
 Use Python 3.12 from the repository root (not from `rag/`):
@@ -49,6 +51,8 @@ rag/.venv/Scripts/python -m rag.app.evaluate --url https://YOUR-SERVICE.onrender
 `eval/questions.json` contains 12 public fixture questions (10 answerable, 2 unrelated). Reports record every answer and failure, retrieval hit@4, normalized exact accuracy, token F1, abstention, exact citation containment, wall-clock median/p95 latency and zero inference API spend. Local RSS is sampled after each question, not a continuous memory profiler. Cloud latency includes the network; cloud memory is not measured by the client. Cost is API spend only, not total infrastructure cost if the plan changes. One small visible set cannot establish general performance; avoid describing this as 100% accurate based on citation containment. Reports are reproducible snapshots, not a benchmark tuned to guarantee success.
 
 Tests cover extraction metadata, malformed inputs, duplicate indexing, upload isolation, exact citations, unavailable index, clearing uploads and busy responses. The original Preview editors are not modified.
+
+Optional browser check, using the existing `web/` Playwright development dependencies and Chrome: `node rag/tests/browser.mjs`. Set `RAG_URL` to test the public deployment. It checks source answers, citations, PDF/text upload, CSV drag-and-drop, error messages, upload removal and mobile overflow. Both local and public browser checks passed; GitHub's Linux RAG tests and existing Preview web checks passed on the deployment commit.
 
 ## Interview explanation
 
