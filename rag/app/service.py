@@ -34,8 +34,12 @@ class RagService:
         digest = chunks[0].metadata["doc_id"]
         existing = collection.get(where={"doc_id": digest}, include=[])
         if existing["ids"]:
+            stored = collection.get(ids=[existing["ids"][0]], include=["metadatas"])[
+                "metadatas"
+            ][0]
             return {
-                "filename": filename,
+                "filename": stored["filename"],
+                "doc_id": digest,
                 "chunks": len(existing["ids"]),
                 "duplicate": True,
             }
@@ -43,6 +47,21 @@ class RagService:
             raise ValueError(
                 "This session reached the passage limit. Start a new session or use a smaller document."
             )
+        names = {
+            meta["filename"]
+            for meta in collection.get(include=["metadatas"])["metadatas"]
+        }
+        original_name = chunks[0].metadata["filename"]
+        name = original_name
+        counter = 2
+        while name in names:
+            path = Path(original_name)
+            name = f"{path.stem} ({counter}){path.suffix}"
+            counter += 1
+        for chunk in chunks:
+            chunk.metadata["filename"] = name
+            if chunk.metadata["kind"] == "csv" and name != original_name:
+                chunk.text = name + chunk.text[len(original_name) :]
         vectors = self.models.embed([c.text for c in chunks])
         collection.upsert(
             ids=[c.id for c in chunks],
@@ -50,7 +69,12 @@ class RagService:
             metadatas=[c.metadata for c in chunks],
             embeddings=vectors,
         )
-        return {"filename": filename, "chunks": len(chunks), "duplicate": False}
+        return {
+            "filename": chunks[0].metadata["filename"],
+            "doc_id": digest,
+            "chunks": len(chunks),
+            "duplicate": False,
+        }
 
     def seed(self):
         for item in json.loads((ROOT / "sample_sources.json").read_text()):
@@ -72,6 +96,7 @@ class RagService:
                     key,
                     {
                         "filename": meta["filename"],
+                        "doc_id": meta["doc_id"],
                         "scope": name,
                         "source_url": meta["source_url"],
                         "chunks": 0,
@@ -80,12 +105,16 @@ class RagService:
                 entry["chunks"] += 1
         return list(docs.values())
 
-    def query(self, question, session=None, filename=None, k=4):
+    def query(
+        self, question, session=None, filename=None, k=4, doc_id=None, scope=None
+    ):
         started = time.perf_counter()
         vector = self.models.embed([question])[0]
         filters = []
         if filename:
             filters.append({"filename": filename})
+        if doc_id:
+            filters.append({"doc_id": doc_id})
         row = re.search(r"\b(?:data\s+)?row\s+(\d+)\b", question, re.I)
         if row:
             filters.append({"row": int(row.group(1))})
@@ -93,9 +122,12 @@ class RagService:
             {"$and": filters} if len(filters) > 1 else filters[0] if filters else None
         )
         candidates = []
-        for collection in [self.samples] + (
-            [self.user_collection(session)] if session else []
-        ):
+        collections = [("samples", self.samples)] + (
+            [("uploads", self.user_collection(session))] if session else []
+        )
+        for collection_scope, collection in collections:
+            if scope and scope != collection_scope:
+                continue
             if not collection.count():
                 continue
             result = collection.query(
@@ -115,6 +147,7 @@ class RagService:
                         "id": id,
                         "passage": text,
                         **meta,
+                        "scope": collection_scope,
                         "similarity": round(1 - float(distance), 4),
                     }
                 )

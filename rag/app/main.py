@@ -2,13 +2,20 @@
 
 import os, secrets, time, threading, logging
 from pathlib import Path
+from typing import Literal
 from fastapi import FastAPI, Request, Response, UploadFile, File, HTTPException
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from .ingestion import MAX_BYTES
 from .service import RagService
 
 app = FastAPI(title="Passage: document answers", docs_url="/docs")
+app.mount(
+    "/static",
+    StaticFiles(directory=Path(__file__).parents[1] / "static"),
+    name="static",
+)
 service = None
 init_error = False
 sessions = {}
@@ -153,6 +160,8 @@ def upload(request: Request, response: Response, file: UploadFile = File(...)):
 class Question(BaseModel):
     question: str = Field(min_length=3, max_length=500)
     filename: str | None = Field(default=None, max_length=150)
+    doc_id: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    scope: Literal["samples", "uploads"] | None = None
 
 
 @app.post("/api/ask")
@@ -161,7 +170,34 @@ def ask(body: Question, request: Request, response: Response):
     key = session(request, response)
     if len(body.question.strip()) < 3:
         raise HTTPException(400, "Enter a question with at least three characters.")
-    return perform(lambda svc: svc.query(body.question.strip(), key, body.filename))
+    return perform(
+        lambda svc: svc.query(
+            body.question.strip(),
+            key,
+            body.filename,
+            doc_id=body.doc_id,
+            scope=body.scope,
+        )
+    )
+
+
+@app.delete("/api/uploads/{doc_id}")
+def remove_document(doc_id: str, request: Request, response: Response):
+    import re
+
+    ready()
+    if not re.fullmatch(r"[a-f0-9]{64}", doc_id):
+        raise HTTPException(400, "Invalid document ID.")
+    key = session(request, response)
+
+    def delete(svc):
+        collection = svc.user_collection(key)
+        if not collection.get(where={"doc_id": doc_id}, include=[])["ids"]:
+            raise HTTPException(404, "This document is no longer available.")
+        collection.delete(where={"doc_id": doc_id})
+        return {"removed": doc_id}
+
+    return perform(delete)
 
 
 @app.delete("/api/uploads")

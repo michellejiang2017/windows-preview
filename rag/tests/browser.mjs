@@ -1,34 +1,73 @@
-// Optional UI check using the existing Preview web development dependencies.
+// Uses the existing Preview web development dependencies and Chrome.
 import {createRequire} from 'node:module';
 import {mkdir} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
 import assert from 'node:assert/strict';
-const require=createRequire(new URL('../../web/package.json',import.meta.url));
-const {chromium}=require('playwright');
-const browser=await chromium.launch({channel:'chrome',headless:true});
-const page=await browser.newPage({viewport:{width:1280,height:850}});const errors=[];
-page.on('pageerror',e=>errors.push(e.message));page.setDefaultTimeout(120000);
-try{
-  await page.goto(process.env.RAG_URL||'http://127.0.0.1:8000');
-  await page.locator('#status').filter({hasText:'Ready.'}).waitFor();
-  await page.getByRole('button',{name:'Python author',exact:true}).click();
-  await page.getByRole('button',{name:'Find an answer',exact:true}).click();
-  await page.locator('.answer').filter({hasText:'Tim Peters [1]'}).waitFor();
-  assert.match(await page.locator('.source').first().textContent(),/Author: Tim Peters/);
-  await page.locator('#file').setInputFiles(new URL('../samples/preview-demo.pdf',import.meta.url).pathname.replace(/^\/(\w:)/,'$1'));
-  await page.locator('#status').filter({hasText:'Added'}).waitFor();
-  await page.locator('#file').setInputFiles({name:'office.txt',mimeType:'text/plain',buffer:Buffer.from('The fictional office is located in Lima.')});
-  await page.locator('#status').filter({hasText:'Added'}).waitFor();
+const require = createRequire(new URL('../../web/package.json', import.meta.url));
+const {chromium} = require('playwright');
+const browser = await chromium.launch({channel:'chrome', headless:true});
+const page = await browser.newPage({viewport:{width:1280,height:850}});
+const errors = [];
+page.on('pageerror', error => errors.push(error.message));
+page.setDefaultTimeout(120000);
+const base = process.env.RAG_URL || 'http://127.0.0.1:8000';
+const waitReady = () => page.locator('#connection[data-ready=true]').waitFor();
+const added = () => page.locator('#status').filter({hasText:/^Added/}).waitFor();
+try {
+  await page.route('**/ready', route => route.fulfill({status:502,contentType:'text/html',body:'Temporary gateway error'}));
+  await page.goto(base);
+  await page.locator('#retry').waitFor();
+  assert.equal(await page.locator('#ask').isDisabled(), true);
+  assert.equal(await page.locator('#upload').isDisabled(), true);
+  assert.match(await page.locator('#status').textContent(), /unavailable/);
+  await page.unroute('**/ready');
+  await page.locator('#retry').click(); await waitReady();
+  assert.equal(await page.locator('#ask').isDisabled(), true); // Empty question.
+  await page.locator('[data-example=python]').click();
+  await page.locator('#ask').click();
+  await page.locator('.answer').filter({hasText:'Tim Peters'}).waitFor();
+  assert.equal(await page.locator('.source mark').first().textContent(), 'Tim Peters');
+  await page.route('**/api/ask', route => route.fulfill({status:502,contentType:'text/html',body:'Gateway unavailable'}));
+  await page.locator('#question').fill('Another question'); await page.locator('#ask').click();
+  await page.locator('#status[role=alert]').waitFor();
+  assert.match(await page.locator('.answer').textContent(), /Tim Peters/); // Keep last successful answer.
+  await page.unroute('**/api/ask');
+  await mkdir('work',{recursive:true});
+  await page.screenshot({path:'work/rag-desktop.png',fullPage:true});
+  await page.locator('#file').setInputFiles(fileURLToPath(new URL('../samples/preview-demo.pdf',import.meta.url))); await added();
+  await page.locator('#file').setInputFiles({name:'office.txt',mimeType:'text/plain',buffer:Buffer.from('The fictional office is located in Lima.')}); await added();
   await page.locator('#question').fill('Where is the fictional office located?');
-  await page.locator('#ask').click();await page.locator('.answer').filter({hasText:'Lima [1]'}).waitFor();
-  await page.locator('#drop').evaluate(el=>{const transfer=new DataTransfer();transfer.items.add(new File(['name,value\nalpha,42\n'],'dragged.csv',{type:'text/csv'}));el.dispatchEvent(new DragEvent('drop',{bubbles:true,dataTransfer:transfer}));});
-  await page.locator('#status').filter({hasText:'Added'}).waitFor();
-  assert.equal(await page.locator('#filter').inputValue(),'dragged.csv');
+  await page.locator('#question').press('Control+Enter');
+  await page.locator('.answer').filter({hasText:'Lima'}).waitFor();
+  await page.locator('.workspace').evaluate(el => {
+    const transfer = new DataTransfer();
+    transfer.items.add(new File(['name,value\nalpha,42\n'],'dragged.csv',{type:'text/csv'}));
+    el.dispatchEvent(new DragEvent('drop',{bubbles:true,dataTransfer:transfer}));
+  }); await added();
+  assert.equal(await page.locator('#filter option:checked').textContent(), 'dragged.csv');
+  await page.getByRole('button',{name:'Remove dragged.csv',exact:true}).click();
+  await page.locator('#status').filter({hasText:'Removed dragged.csv'}).waitFor();
+  assert.equal(await page.getByRole('button',{name:'Search office.txt',exact:true}).count(),1);
+  assert.equal(await page.getByRole('button',{name:'Search dragged.csv',exact:true}).count(),0);
+  await page.getByRole('button',{name:'Search office.txt',exact:true}).click();
+  assert.equal(await page.getByRole('button',{name:'Search office.txt',exact:true}).getAttribute('aria-pressed'),'true');
   await page.locator('#file').setInputFiles({name:'broken.pdf',mimeType:'application/pdf',buffer:Buffer.from('invalid pdf')});
   await page.locator('#status[role=alert]').waitFor();
-  await page.locator('#clear').click();await page.locator('#status').filter({hasText:'removed'}).waitFor();
-  assert.equal(await page.locator('#docs').getByText('office.txt',{exact:true}).count(),0);
+  assert.equal(await page.locator('#file').inputValue(), '');
+  await page.getByRole('button',{name:'Remove office.txt',exact:true}).click();
+  await page.locator('#status').filter({hasText:'Removed office.txt'}).waitFor();
+  assert.equal(await page.locator('#result').textContent(),'');
+  await page.getByRole('button',{name:'Remove preview-demo.pdf',exact:true}).click();
+  await page.locator('#status').filter({hasText:'Removed preview-demo.pdf'}).waitFor();
   await page.setViewportSize({width:390,height:844});
-  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth));
-  await mkdir('work',{recursive:true});await page.screenshot({path:'work/rag-mobile.png',fullPage:true});
-  assert.deepEqual(errors,[]);console.log('PASS source answer, citations, PDF/text upload, CSV drag-and-drop, invalid-file errors, clear, mobile layout; no browser errors.');
-}finally{await browser.close();}
+  assert.equal(await page.locator('#sources').isVisible(),false);
+  assert.ok((await page.locator('#question').boundingBox()).y < 350);
+  await page.locator('#toggle-sources').click();
+  assert.equal(await page.locator('#sources').isVisible(),true);
+  await page.getByRole('button',{name:'Search zen-of-python.txt',exact:true}).click();
+  assert.equal(await page.locator('#sources').isVisible(),false);
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
+  await page.screenshot({path:'work/rag-mobile.png',fullPage:true});
+  assert.deepEqual(errors,[]);
+  console.log('PASS readiness/retry, empty input, citations/highlight, error recovery, PDF/text/CSV uploads, keyboard submit, source selection, individual deletion preserving other files, mobile workspace.');
+} finally { await browser.close(); }

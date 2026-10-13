@@ -52,6 +52,8 @@ rag/.venv/Scripts/python -m rag.app.evaluate --url https://YOUR-SERVICE.onrender
 
 Tests cover extraction metadata, malformed inputs, duplicate indexing, upload isolation, exact citations, unavailable index, clearing uploads and busy responses. The original Preview editors are not modified.
 
+The document workspace also supports removing individual uploads, source selection by document ID and scope, and distinct names for different files with the same filename. Sample documents cannot be deleted. Controls wait for readiness, network failures show retry guidance, and mobile users can open Documents without pushing the question box below the entire source list. Model behavior and evaluation thresholds remain unchanged.
+
 Optional browser check, using the existing `web/` Playwright development dependencies and Chrome: `node rag/tests/browser.mjs`. Set `RAG_URL` to test the public deployment. It checks source answers, citations, PDF/text upload, CSV drag-and-drop, error messages, upload removal and mobile overflow. Both local and public browser checks passed; GitHub's Linux RAG tests and existing Preview web checks passed on the deployment commit.
 
 ## Interview explanation

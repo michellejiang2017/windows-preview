@@ -112,3 +112,44 @@ def test_api_errors_and_browser_isolation(service, monkeypatch):
     monkeypatch.setattr(main, "service", None)
     assert a.get("/ready").status_code == 503
     assert a.get("/health").json()["ready"] is False
+
+
+def test_individual_removal_and_exact_source_selection(service, monkeypatch):
+    monkeypatch.setattr(main, "service", service)
+    main.sessions.clear()
+    a, b = TestClient(main.app), TestClient(main.app)
+    first = a.post(
+        "/api/ingest",
+        files={"file": ("office.txt", b"The synthetic office is in Lima.")},
+    ).json()
+    second = a.post(
+        "/api/ingest",
+        files={"file": ("office.txt", b"The synthetic office is in Oslo.")},
+    ).json()
+    assert first["doc_id"] != second["doc_id"]
+    assert second["filename"] == "office (2).txt"
+    duplicate = a.post(
+        "/api/ingest",
+        files={"file": ("renamed.txt", b"The synthetic office is in Lima.")},
+    ).json()
+    assert duplicate["duplicate"] and duplicate["filename"] == "office.txt"
+    assert duplicate["doc_id"] == first["doc_id"]
+    answer = a.post(
+        "/api/ask",
+        json={
+            "question": "Where is the synthetic office?",
+            "doc_id": second["doc_id"],
+            "scope": "uploads",
+        },
+    ).json()
+    assert answer["citations"] and all(
+        c["doc_id"] == second["doc_id"] for c in answer["citations"]
+    )
+    assert b.delete("/api/uploads/" + first["doc_id"]).status_code == 404
+    assert a.delete("/api/uploads/" + first["doc_id"]).status_code == 200
+    uploads = [d for d in a.get("/api/documents").json() if d["scope"] == "uploads"]
+    assert [d["doc_id"] for d in uploads] == [second["doc_id"]]
+    assert a.delete("/api/uploads/" + first["doc_id"]).status_code == 404
+    sample_id = a.get("/api/documents").json()[0]["doc_id"]
+    assert a.delete("/api/uploads/" + sample_id).status_code == 404
+    assert a.delete("/api/uploads/not-an-id").status_code == 400
