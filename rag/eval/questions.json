@@ -1,0 +1,14 @@
+[
+ {"id":"text-author","question":"Who wrote the Zen of Python?","filename":"zen-of-python.txt","answers":["Tim Peters"],"source_contains":"Author: Tim Peters"},
+ {"id":"text-date","question":"When was PEP 20 created?","filename":"zen-of-python.txt","answers":["19-Aug-2004"],"source_contains":"Created: 19-Aug-2004"},
+ {"id":"text-title","question":"What is the title of PEP 20?","filename":"zen-of-python.txt","answers":["The Zen of Python"],"source_contains":"Title: The Zen of Python"},
+ {"id":"text-errors","question":"How should errors pass?","filename":"zen-of-python.txt","answers":["never pass silently","never"],"source_contains":"Errors should never pass silently"},
+ {"id":"pdf-blank","question":"Which page is a blank page?","filename":"preview-demo.pdf","answers":["page 3","3"],"source_contains":"page 3 is intentionally blank"},
+ {"id":"pdf-ocr","question":"Which page should I OCR?","filename":"preview-demo.pdf","answers":["page 2","2"],"source_contains":"OCR page 2"},
+ {"id":"pdf-secret","question":"What is the value of DEMO-SECRET?","filename":"preview-demo.pdf","answers":["000-TEST-000"],"source_contains":"DEMO-SECRET: 000-TEST-000"},
+ {"id":"csv-species","question":"What species is in data row 1?","filename":"iris.csv","answers":["setosa"],"source_contains":"data row 1:"},
+ {"id":"csv-value","question":"What is the sepal_length in data row 1?","filename":"iris.csv","answers":["5.1"],"source_contains":"data row 1:"},
+ {"id":"csv-last","question":"What species is in data row 150?","filename":"iris.csv","answers":["virginica"],"source_contains":"data row 150:"},
+ {"id":"unknown-country","question":"What is the capital of France?","answers":[],"unanswerable":true},
+ {"id":"unknown-person","question":"Who won the 2025 chess championship?","answers":[],"unanswerable":true}
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "file": "preview-demo.pdf",
+    "url": "https://raw.githubusercontent.com/michellejiang2017/windows-preview/main/desktop/Demo.pdf",
+    "license": "AGPL-3.0-or-later; synthetic public Preview demo",
+    "sha256": "2cfb2ae04fae5de9b6d673d204f66de7a7457a596b68fdafeac4b1ec27cf9cc9"
+  },
+  {
+    "file": "zen-of-python.txt",
+    "url": "https://raw.githubusercontent.com/python/peps/main/peps/pep-0020.rst",
+    "license": "Python Software Foundation / PEP repository license",
+    "sha256": "742999637cc96eef52e8148fdf65a6065a0953daee92bb48b8c739efcf6def07"
+  },
+  {
+    "file": "iris.csv",
+    "url": "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv",
+    "license": "Public Iris measurements; source repository attribution retained",
+    "sha256": "9cc1c345c71bcc9b486b74cbf6063fa66f4bb5e0f603a4b3c3471ec2e5e8e355"
+  }
+]

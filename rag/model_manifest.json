@@ -1,0 +1,12 @@
+{
+  "embedding": {
+    "repo": "Xenova/all-MiniLM-L6-v2",
+    "revision": "751bff37182d3f1213fa05d7196b954e230abad9",
+    "file": "onnx/model_quantized.onnx"
+  },
+  "answer": {
+    "repo": "Xenova/distilbert-base-cased-distilled-squad",
+    "revision": "bdbb0a5e9c617c3c7ea9f3cbaf2be3ad871bcd7d",
+    "file": "onnx/model_quantized.onnx"
+  }
+}

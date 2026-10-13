@@ -9,3 +9,9 @@ __pycache__/
 work/
 *.zip
 build/
+.env
+.env.*
+!.env.example
+rag/models/
+rag/data/
+rag/reports/local-*
